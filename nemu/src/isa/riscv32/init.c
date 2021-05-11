@@ -10,8 +10,10 @@ static const uint32_t img [] = {
   0x0000006b,  // nemu_trap
 };
 
+//重设pc + 寄存器清零
 static void restart() {
   /* Set the initial program counter. */
+  //这是真实物理地址
   cpu.pc = PMEM_BASE + IMAGE_START;
 
   /* The zero register is always 0. */
@@ -20,6 +22,7 @@ static void restart() {
 
 void init_isa() {
   /* Load built-in image. */
+  //映射1M内存到host virtual addr
   memcpy(guest_to_host(IMAGE_START), img, sizeof(img));
 
   /* Initialize this virtual computer system. */

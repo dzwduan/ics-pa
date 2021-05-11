@@ -5,6 +5,7 @@ FILE *log_fp = NULL;
 
 void init_log(const char *log_file) {
   if (log_file == NULL) return;
+  //返回可写的log_fp打开文件
   log_fp = fopen(log_file, "w");
   Assert(log_fp, "Can not open '%s'", log_file);
 }

@@ -5,9 +5,12 @@
 #include <stdlib.h>
 #include <time.h>
 
+//模拟128M内存
 static uint8_t pmem[PMEM_SIZE] PG_ALIGN = {};
 
+
 void* guest_to_host(paddr_t addr) { return &pmem[addr]; }
+//TODO
 paddr_t host_to_guest(void *addr) { return (void *)pmem - addr; }
 
 IOMap* fetch_mmio_map(paddr_t addr);

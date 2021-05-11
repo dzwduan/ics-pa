@@ -1,11 +1,13 @@
 NAME = nemu
 
-ISA ?= x86
+#判断ISA在限定的范围内
+ISA ?= riscv64
 ISAS = $(shell ls src/isa/)
 ifeq ($(filter $(ISAS), $(ISA)), ) # ISA must be valid
 $(error Invalid ISA. Supported: $(ISAS))
 endif
 
+#判断interpreter在限定的范围内
 ENGINE ?= interpreter
 ENGINES = $(shell ls src/engine/)
 ifeq ($(filter $(ENGINES), $(ENGINE)), ) # ENGINE must be valid
@@ -27,7 +29,7 @@ endif
 
 ifndef SHARE
 DIFF ?= kvm
-ifneq ($(ISA),x86)
+ifneq ($(ISA),riscv64)
 ifeq ($(DIFF),kvm)
 DIFF = qemu
 $(info KVM is only supported with ISA=x86, use QEMU instead)
@@ -69,8 +71,11 @@ CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) \
 
 # Files to be compiled
 SRCS = $(shell find src/ -name "*.c" | grep -v "isa\|engine")
+#找到src/isa/ricv32下面所有.c文件
 SRCS += $(shell find src/isa/$(ISA) -name "*.c")
+#找到src/engine/enterpreter下面所有.c文件
 SRCS += $(shell find src/engine/$(ENGINE) -name "*.c")
+#TODO
 OBJS = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
 # Compilation patterns

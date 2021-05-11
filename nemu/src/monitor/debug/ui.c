@@ -5,6 +5,13 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "isa/riscv64.h"
+#include "memory/vaddr.h"
+#include "memory/paddr.h"
+
+#define CLOSE "\001\033[0m\002"                 // 关闭所有属性
+#define BLOD  "\001\033[1m\002"                 // 强调、加粗、高亮
+#define BEGIN(x,y) "\001\033["#x";"#y"m\002"    // x: 背景，y: 前景
 
 void cpu_exec(uint64_t);
 int is_batch_mode();
@@ -13,14 +20,16 @@ int is_batch_mode();
 static char* rl_gets() {
   static char *line_read = NULL;
 
+  //TODO:已经置空了为什么还需要判断？
   if (line_read) {
     free(line_read);
     line_read = NULL;
   }
-
-  line_read = readline("(nemu) ");
+  //readline returns the text of the line read.
+  line_read = readline(BEGIN(49, 34)"Myshell $ "CLOSE);
 
   if (line_read && *line_read) {
+    //自动补全功能
     add_history(line_read);
   }
 
@@ -28,16 +37,59 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
+  //INT_MAX
   cpu_exec(-1);
   return 0;
 }
 
-
+//输入q退出
 static int cmd_q(char *args) {
   return -1;
 }
 
 static int cmd_help(char *args);
+
+//impletion helper functions
+static int cmd_s(char *args){
+  char *arg = strtok(NULL, " ");
+  if(!arg){
+    cpu_exec(1);
+  }
+  else{
+    int step = atoi(arg);
+    cpu_exec(step);
+  }
+  return 0;
+}
+
+
+static int cmd_i(char *args){
+  char *arg = strtok(NULL, " ");
+  if(arg[0]=='r')
+    isa_reg_display();
+  return 0;
+}
+
+
+static int cmd_x(char *args){
+  char *arg1 = strtok(NULL, " ");
+  //没有额外参数，err
+  if(!arg1) return -1;
+  char *arg2 = strtok(NULL, " ");
+  int num = atoi(arg1);
+  word_t addr=0;
+  sscanf(arg2,"0x%lx",&addr);
+  int len=0;
+  while(num--){
+      len++;
+      word_t vaddr = vaddr_read(addr,1);
+      printf("%02lx ",vaddr);
+      addr+=1;
+      if(len%4==0) puts("");
+  }
+  puts("");
+  return 0;
+}
 
 static struct {
   char *name;
@@ -47,9 +99,10 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
+  { "s", "exec one instruction per step",cmd_s},
+  { "i", "print the state of registers",cmd_i},
+  { "x", "scanf memory",cmd_x},
   /* TODO: Add more commands */
-
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))

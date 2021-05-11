@@ -13,7 +13,7 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
-static int batch_mode = false;
+static int batch_mode = false; //TODO
 static int difftest_port = 1234;
 
 int is_batch_mode() { return batch_mode; }
@@ -56,6 +56,11 @@ static inline long load_img() {
 }
 
 static inline void parse_args(int argc, char *argv[]) {
+  //新建一个struct option类型的表
+  //required_argument 表明这个长参数必须带参数
+  //flag   当这个指针为空的时候，函数直接将val的数值从getopt_long的返回值返回出去
+  //val    用于指定函数找到该选项时的返回值
+  //0是为什么？
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
     {"log"      , required_argument, NULL, 'l'},
@@ -65,16 +70,25 @@ static inline void parse_args(int argc, char *argv[]) {
     {0          , 0                , NULL,  0 },
   };
   int o;
+  /* int getopt_long(int argc, char * const argv[],
+                  const char *optstring,
+                  const struct option *longopts, int *longindex);
+  */
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
     switch (o) {
       case 'b': batch_mode = true; break;
+      //optstring中后面的冒号表示需要接变量，并存于optarg中
+      //sscanf转换optarg格式到diffetst_port
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
+      //TODO:什么时候为1
       case 1:
+        printf("This is 1\n");
         if (img_file != NULL) Log("too much argument '%s', ignored", optarg);
         else img_file = optarg;
         break;
+      //-h
       default:
         printf("Usage: %s [OPTION...] IMAGE\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");

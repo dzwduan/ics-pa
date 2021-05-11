@@ -5,6 +5,7 @@
 
 // memory
 #define riscv64_IMAGE_START 0x100000
+// riscv物理地址从0x80000000开始
 #define riscv64_PMEM_BASE 0x80000000
 
 // reg
