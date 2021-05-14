@@ -8,11 +8,17 @@
 
 // this should be enough
 static char buf[65536] = {};
-static char code_buf[65536 + 128] = {}; // a little larger than `buf`
+static char code_buf[65536 + 1280] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
+"#include<signal.h>\n"
+"#include<sys/types.h>\n"
+"void f(){"
+"  printf(\"can not divide by zero\");"
+"}\n"
 "int main() { "
-"  unsigned result = %s; "
+"  unsigned result = (unsigned)%s; "
+"  signal(SIGFPE,f);"
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
@@ -55,15 +61,16 @@ static inline void gen_rand_expr() {
   switch (choose(3)) {
     case 0: gen_num(); break;
     case 1: gen('('); SPACE; gen_rand_expr(); SPACE; gen(')'); break;
-    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+    default: if(idx>65536)break; else{ gen_rand_expr(); gen_rand_op(); gen_rand_expr();} break;
   }
 }
 
 int main(int argc, char *argv[]) {
   int seed = time(0);
   srand(seed);
-  int loop = 10;
+  int loop = 100;
   if (argc > 1) {
+    //注意sscanf的运用
     sscanf(argv[1], "%d", &loop);
   }
   int i;
@@ -73,20 +80,26 @@ int main(int argc, char *argv[]) {
     memset(buf,0,strlen(buf));
     gen_rand_expr();
     buf[idx] = '\0';
+    //buf按照code_format格式写入code_buf
+    //code_buf就是一个c代码
     sprintf(code_buf, code_format, buf);
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
+    //code_buf写入.c文件
     fputs(code_buf, fp);
     fclose(fp);
 
+    //执行shell命令
     int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
     if (ret != 0) continue;
-
+    // 调用fork()产生子进程，然后从子进程中调用/bin/sh -c 来执行参数command 的指令。
+    //因为利用system函数调用shell命令，只能获取到shell命令的返回值，而不能获取shell命令的输出结果
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
     int result;
+    //将输出结果写入到result
     if(fscanf(fp, "%d", &result));
     pclose(fp);
 
