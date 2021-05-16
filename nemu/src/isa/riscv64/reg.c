@@ -11,11 +11,29 @@ const char *regs[] = {
 void isa_reg_display() {
   int i=0; 
   while(i<32){
-    printf("%s : 0x%lx\n",regs[i],reg_d(i));
+    printf("%-2s : 0x%lx\n",regs[i],reg_d(i));
     i++;
   }
 }
 
-word_t isa_reg_str2val(const char *s, bool *success) {
-  return 0;
+uint64_t isa_reg_str2val(const char *s, bool *success) {
+  int i=0;
+  uint64_t val=0;
+  // printf("isa_reg_str2val %s\n",s);
+  // char * ss=0;
+  // s++;
+  // while(*s){
+  //   *(ss++) = *(s++);
+  // }
+  // *ss = '\0';
+  // printf("isa_reg_str2val %s\n",ss);
+  while(i<32){
+    if(strcmp(s,regs[i])==0){
+      *success = true;
+      val = reg_d(i);
+    }
+    i++;
+  }
+  //if(*success) printf("success\n");
+  return val;
 }

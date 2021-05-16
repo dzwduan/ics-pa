@@ -3,6 +3,6 @@
 
 #include <common.h>
 
-word_t expr(char *, bool *);
+uint64_t expr(char *, bool *);
 
 #endif

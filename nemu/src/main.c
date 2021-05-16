@@ -7,15 +7,15 @@ int is_exit_status_bad();
 #include <ctype.h>
 #include <stdlib.h>
 #include "monitor/debug/expr.h"
-extern word_t expr(char *e, bool *success);
-int test_expr(char*);
+// extern uint64_t expr(char *e, bool *success);
+// int test_expr(char*);
 
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
   init_monitor(argc, argv);
-  printf("Test start\n");
-  test_expr("/home/dzw/ics-pa/nemu/tools/gen-expr/input");
-  printf("Test end\n");
+  // printf("Test start\n");
+  // test_expr("/home/dzw/ics-pa/nemu/tools/gen-expr/input");
+  // printf("Test end\n");
   /* Start engine. */
   engine_start();
 

@@ -67,6 +67,10 @@ static int cmd_i(char *args){
   char *arg = strtok(NULL, " ");
   if(arg[0]=='r')
     isa_reg_display();
+  //打印使用中的监视点
+  if(arg[0]=='w'){
+    print_watchpoint();
+  }
   return 0;
 }
 
@@ -91,6 +95,19 @@ static int cmd_x(char *args){
   return 0;
 }
 
+//设置监视点
+static int cmd_w(char * args){
+  char *name = strtok(NULL, " ");
+  set_wp(name);
+  return 0;
+}
+
+static int cmd_d(char * args){
+  char *num = strtok(NULL, " ");
+  del_wp(atoi(num));
+  return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -102,6 +119,8 @@ static struct {
   { "s", "exec one instruction per step",cmd_s},
   { "i", "print the state of registers",cmd_i},
   { "x", "scanf memory",cmd_x},
+  { "w", "set watch point",cmd_w},
+  { "d", "delete watch point",cmd_d},
   /* TODO: Add more commands */
 };
 

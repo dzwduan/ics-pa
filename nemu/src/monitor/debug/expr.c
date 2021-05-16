@@ -46,7 +46,7 @@ static struct rule {
   {"!=",TK_NEQ},
   {"!",TK_NOT},
   {"0[Xx][0-9A-Fa-f]+",TK_HEX},
-  {"\\$((x[0-31])|(f[0-31]))",TK_REG},
+  {"(0|s[0-11]|t[0-6]|a[0-7]|sp|gp|ra)",TK_REG},
   {"<=",TK_LE},
   {">=",TK_GE},
   {"<",'<'},
@@ -148,14 +148,14 @@ static bool make_token(char *e) {
 
 
 //pa1.2
-static u_int32_t eval(int p,int q);
+static u_int64_t eval(int p,int q);
 static bool check_parentheses(int p,int q);
-static u_int32_t getMainOpt(int p,int q);
-static bool is_opt(u_int32_t x);
-static u_int32_t opt_pri(int x);
+static u_int64_t getMainOpt(int p,int q);
+static bool is_opt(u_int64_t x);
+static u_int64_t opt_pri(int x);
 static bool is_deref(int x);
 
-static u_int32_t getMainOpt(int p,int q){  //bug
+static u_int64_t getMainOpt(int p,int q){  //bug
   int result=p;
   int pos = p;
   int sum =0;
@@ -192,7 +192,7 @@ static u_int32_t getMainOpt(int p,int q){  //bug
 }
 
 //判断是否是运算符
-static bool is_opt(u_int32_t x){
+static bool is_opt(u_int64_t x){
   switch (x){
     case TK_HEX:
     case TK_REG:
@@ -205,7 +205,7 @@ static bool is_opt(u_int32_t x){
 }
 
 //数字越高优先级越高
-static u_int32_t opt_pri(int x){
+static u_int64_t opt_pri(int x){
   switch (x){
     
     case '(':
@@ -293,7 +293,7 @@ static bool check_parentheses(int p,int q){
 }
 
 
-static u_int32_t eval(int p,int q){
+static u_int64_t eval(int p,int q){
   //static int nums=0;
   if(p>q){
     printf("Bad expression\n");
@@ -302,7 +302,7 @@ static u_int32_t eval(int p,int q){
   else if(p==q){
     if(tokens[p].type == TK_REG){
       bool flag = true;
-      u_int32_t answer = isa_reg_str2val(tokens[p].str,&flag);
+      u_int64_t answer = isa_reg_str2val(tokens[p].str,&flag);
       if(!flag){
         printf("invalid reg : input like $eax\n");
         return 0;
@@ -311,12 +311,12 @@ static u_int32_t eval(int p,int q){
       }
     }
     else if(tokens[p].type == TK_HEX){
-      u_int32_t hexval = 0;
+      int hexval = 0;
       sscanf(tokens[p].str,"0x%x",&hexval);
       return hexval;
     }
     else{
-          u_int32_t number = strtol(tokens[p].str,NULL,10);
+          u_int64_t number = strtol(tokens[p].str,NULL,10);
           return number;
     }
 
@@ -330,11 +330,11 @@ static u_int32_t eval(int p,int q){
   }
 
   else{
-    u_int32_t op = getMainOpt(p,q);  
+    u_int64_t op = getMainOpt(p,q);  
 
     //将解引用和负号独立出来考虑，且这只对一个数进行操作
     if(p == op || tokens[op].type==TK_MINUS || tokens[op].type==TK_DEREF){
-      u_int32_t val = eval(p+1,q);
+      u_int64_t val = eval(p+1,q);
       switch (tokens[op].type)
       {
         case TK_MINUS:
@@ -349,8 +349,8 @@ static u_int32_t eval(int p,int q){
     }
 
 
-    u_int32_t val1 = eval(p,op-1);
-    u_int32_t val2 = eval(op+1,q);
+    u_int64_t val1 = eval(p,op-1);
+    u_int64_t val2 = eval(op+1,q);
 
     switch(tokens[op].type){
       case '+':
@@ -386,7 +386,7 @@ static u_int32_t eval(int p,int q){
   }
 }
 
-word_t expr(char *e, bool *success) {
+uint64_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     printf("make token error!\n");
@@ -399,7 +399,7 @@ word_t expr(char *e, bool *success) {
 
 
   //printf("Enter check parentheses \n");
-  bool res = check_parentheses(0,nr_token-1);
+  //bool res = check_parentheses(0,nr_token-1);
   // if(res)
   //   printf("check_parenthese successfully\n");
   // else
@@ -408,7 +408,7 @@ word_t expr(char *e, bool *success) {
   // }
 
   // printf("Enter get main opt\n");
-  int index = getMainOpt(0,nr_token-1);
+  //int index = getMainOpt(0,nr_token-1);
   //printf("main opt @ position %d\n",index);
 
   int i;
@@ -424,7 +424,7 @@ word_t expr(char *e, bool *success) {
   }
 
   // printf("Enter eval final value\n");
-  int val = eval(0,nr_token-1);
+  uint64_t val = eval(0,nr_token-1);
   //printf("result is : %d\n",val);
   
 
