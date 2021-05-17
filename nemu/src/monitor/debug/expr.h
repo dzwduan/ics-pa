@@ -8,5 +8,3 @@ uint64_t expr(char *, bool *);
 #endif
 
 
-
-make linux
