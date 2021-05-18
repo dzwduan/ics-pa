@@ -17,10 +17,50 @@ static inline def_EHelper(jalr) {
   //printf("Jalr started\n");
   rtl_li(s,s0,cpu.pc+4);
   rtl_addi(s,s1,dsrc1, id_src2->imm);
-  *s1 = (*s1)&(~0x1);
+  *s1 = (*s1)&(~0x1u);
   rtl_jr(s,s1);
   rtl_li(s,ddest,*s0);
   //difftest_skip_dut(1, 2);
   print_asm_template2(jalr);
   //printf("jalr ended\n");
 }
+
+//if (rs1 == rs2) pc += sext(offset)
+static inline def_EHelper(beq) {
+  //if(*dsrc1 == *dsrc2) rtl_j(s,s->jmp_pc);
+  rtl_jrelop(s,RELOP_EQ,dsrc1,dsrc2,s->jmp_pc);
+  print_asm_template2(beq);
+}
+
+//if (rs1 ≠ rs2) pc += sext(offset)
+static inline def_EHelper(bne) {
+  // if(*dsrc1 != *dsrc2) rtl_j(s,s->jmp_pc);
+  //printf("bne started\n");
+  //printf("0x%lx, 0x%lx, jmp_pc=0x%lx\n",*dsrc1, *dsrc2,s->jmp_pc);
+  rtl_jrelop(s, RELOP_NE, dsrc1, dsrc2, s->jmp_pc);
+  print_asm_template2(bne);
+}
+
+// static inline make_EHelper(blt) {
+//   rtl_jrelop(s, RELOP_LT, dsrc1, dsrc2, s->jmp_pc);
+//   print_asm_template3(blt);
+// }
+
+// static inline make_EHelper(bge){
+//   rtl_jrelop(s, RELOP_GE, dsrc1, dsrc2, s->jmp_pc);
+//   print_asm_template3(bge);
+// }
+
+
+// static inline make_EHelper(bltu) {
+//   rtl_jrelop(s, RELOP_LTU, dsrc1, dsrc2, s->jmp_pc);
+//   print_asm_template3(bltu);
+// }
+
+// static inline make_EHelper(bgeu){
+//   rtl_jrelop(s, RELOP_GEU, dsrc1, dsrc2, s->jmp_pc);
+//   print_asm_template3(bgeu);
+// }
+
+
+

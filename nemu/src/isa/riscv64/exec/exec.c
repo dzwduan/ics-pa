@@ -8,6 +8,7 @@ static inline void set_width(DecodeExecState *s, int width) {
 
 static inline def_EHelper(load) {
   switch (s->isa.instr.i.funct3) {
+    EXW  (2, lws, 4)
     EXW  (3, ld, 8)
     default: exec_inv(s);
   }
@@ -20,17 +21,36 @@ static inline def_EHelper(store) {
   }
 }
 
-static inline def_EHelper(r2r){
-  switch (s->isa.instr.s.funct3) {
+static inline def_EHelper(r2rw){
+  switch (s->isa.instr.r.funct3 | (s->isa.instr.r.funct7<<3)) {
+    EX (0x0,addw)
+    default: exec_inv(s);
+  }
+}
 
+static inline def_EHelper(r2r){
+  switch (s->isa.instr.r.funct3 | (s->isa.instr.r.funct7<<3)) {
+    EX (0x100,sub)
     default: exec_inv(s);
   }
 }
 
 static inline def_EHelper(r2i){
-  switch (s->isa.instr.s.funct3) {
-    EXW (0, addi, 8)
-    
+  switch (s->isa.instr.i.funct3) {
+    EX (0, addi)
+    EX (3, sltiu)
+    default: exec_inv(s);
+  }
+}
+
+static inline def_EHelper(branch){
+  switch (s->isa.instr.b.funct3) {
+    EX (0, beq)
+    EX (1, bne)
+    // EX (2, blt)
+    // EX (3, bge)
+    // EX (4, bltu)
+    // EX (5, bgeu)
     default: exec_inv(s);
   }
 }
@@ -44,11 +64,13 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     IDEX (0b01000, S, store)
     IDEX (0b01101, U, lui)
     //TODO: add decode of R and B
-    // IDEX (0b01100, R, r2r)
-    // IDEX (0b11000, B, branch)
+    IDEX (0b01110, R, r2rw)
+    IDEX (0b01100, R, r2r)
+    IDEX (0b11000, B, branch)
     IDEX (0b00101, U, auipc)
     IDEX (0b11011, J, jal)
     IDEX (0b00100, I, r2i)
+    IDEX (0b00110, I, addiw)
     EX   (0b11010, nemu_trap)
     IDEX (0b11001, I, jalr)
     default: exec_inv(s);

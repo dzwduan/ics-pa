@@ -43,8 +43,8 @@ static inline def_DHelper(S) {
 
 //add more decode code
 static inline def_DHelper(J) {
-  sword_t simm = (s->isa.instr.j.simm20<<20)|(s->isa.instr.j.simm19_12<<12)|
-                 (s->isa.instr.j.simm11<<11)|(s->isa.instr.j.simm10_1<<1);
+  sword_t simm = (s->isa.instr.j.simm20<<20)|(s->isa.instr.j.imm19_12<<12)|
+                 (s->isa.instr.j.imm11<<11)|(s->isa.instr.j.imm10_1<<1);
   
   s->jmp_pc = cpu.pc+simm;
   //printf("decode j jmp-pc 0x%lx\n",s->jmp_pc);
@@ -53,10 +53,27 @@ static inline def_DHelper(J) {
 }
 
 
-static inline def_DHelper(C_LW){
+static inline def_DHelper(R) {
+  decode_op_r(s, id_src1, s->isa.instr.r.rs1, true);
+  decode_op_r(s, id_src2, s->isa.instr.r.rs2, true);
+  decode_op_r(s, id_dest, s->isa.instr.r.rd, false);
+}
 
+static inline def_DHelper(B) {
+  sword_t simm = (s->isa.instr.b.simm12<<12) |(s->isa.instr.b.imm11<<11)|
+                 (s->isa.instr.b.imm10_5<<5)|(s->isa.instr.b.imm4_1<<1);
+  
+  s->jmp_pc = cpu.pc+simm;
+  //printf("decode j jmp-pc 0x%lx\n",s->jmp_pc);
+  decode_op_r(s, id_src1, s->isa.instr.b.rs1, true);
+  decode_op_r(s, id_src2, s->isa.instr.b.rs2, true);
+  //decode_op_r(s,id_dest,s->isa.instr.j.rd, false);
+}
+
+static inline def_DHelper(C_LW){
+  TODO();
 }
 
 static inline def_DHelper(C_LWSP){
-  
+  TODO();
 }
