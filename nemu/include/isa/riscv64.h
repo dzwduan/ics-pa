@@ -18,7 +18,7 @@ typedef struct {
   vaddr_t pc;
 } riscv64_CPU_state;
 
-// decode
+// decode 立即数都是有符号数
 typedef struct {
   union {
     struct {

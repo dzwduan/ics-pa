@@ -11,9 +11,10 @@ const char *regs[] = {
 void isa_reg_display() {
   int i=0; 
   while(i<32){
-    printf("%-2s : 0x%lx\n",regs[i],reg_d(i));
+    printf("%-3s : 0x%lx\n",regs[i],reg_d(i));
     i++;
   }
+  printf("pc  : 0x%lx\n",cpu.pc);
 }
 
 uint64_t isa_reg_str2val(const char *s, bool *success) {
@@ -34,6 +35,7 @@ uint64_t isa_reg_str2val(const char *s, bool *success) {
     }
     i++;
   }
+
   //if(*success) printf("success\n");
   return val;
 }

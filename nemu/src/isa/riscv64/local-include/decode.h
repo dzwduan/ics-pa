@@ -39,3 +39,24 @@ static inline def_DHelper(S) {
   decode_op_i(s, id_src2, simm, true);
   decode_op_r(s, id_dest, s->isa.instr.s.rs2, true);
 }
+
+
+//add more decode code
+static inline def_DHelper(J) {
+  sword_t simm = (s->isa.instr.j.simm20<<20)|(s->isa.instr.j.simm19_12<<12)|
+                 (s->isa.instr.j.simm11<<11)|(s->isa.instr.j.simm10_1<<1);
+  
+  s->jmp_pc = cpu.pc+simm;
+  //printf("decode j jmp-pc 0x%lx\n",s->jmp_pc);
+  decode_op_i(s, id_src1, simm, true);
+  decode_op_r(s,id_dest,s->isa.instr.j.rd, false);
+}
+
+
+static inline def_DHelper(C_LW){
+
+}
+
+static inline def_DHelper(C_LWSP){
+  
+}

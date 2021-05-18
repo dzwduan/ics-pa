@@ -18,9 +18,10 @@ extern void (*ref_difftest_getregs)(void *c);
 extern void (*ref_difftest_setregs)(const void *c);
 extern void (*ref_difftest_exec)(uint64_t n);
 
+//ref参考值，dut测试值
 static inline bool difftest_check_reg(const char *name, vaddr_t pc, rtlreg_t ref, rtlreg_t dut) {
   if (ref != dut) {
-    Log("%s is different after executing instruction at pc = " FMT_WORD ", right = " FMT_WORD ", wrong = " FMT_WORD,
+    Log("\n%s is different after executing instruction at pc = " FMT_WORD ", right = " FMT_WORD ", wrong = " FMT_WORD,
         name, pc, ref, dut);
     return false;
   }
