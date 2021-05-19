@@ -8,9 +8,12 @@ static inline void set_width(DecodeExecState *s, int width) {
 
 static inline def_EHelper(load) {
   switch (s->isa.instr.i.funct3) {
-    EXW  (2, lws,4)
+    //lws这个命名有问题，但是懒得改了
+    EXW  (1, lws, 2)
+    EXW  (2, lws, 4)
     EXW  (3, ld, 8)
     EXW  (4, ld, 1)  //从一个字节加载 lbu
+    EXW  (5, ld, 2)  //lhu
     default: exec_inv(s);
   }
 }
@@ -26,10 +29,33 @@ static inline def_EHelper(store) {
   }
 }
 
+static inline def_EHelper(i32) {
+  if(s->isa.instr.i.funct3!=5)
+  switch (s->isa.instr.i.funct3) {
+    EX (0, addiw)
+    EX (1, slliw)
+    // EX (5, srliw)
+    // EX (5, sraiw)
+    default: exec_inv(s);
+  }
+  else{
+    switch (s->isa.instr.i.simm11_0>>5) {
+      EX (0, srliw)
+      EX (0b0100000,sraiw)
+    }
+  }
+}
+
 static inline def_EHelper(r2rw){
   switch (s->isa.instr.r.funct3 | (s->isa.instr.r.funct7<<3)) {
     EX (0x000, addw)
+    EX (0x100, subw)
+    EX (0x105, sraw)
     EX (0x001, sllw)
+    EX (0x005, srlw)
+    EX (0x008, mulw)
+    EX (0x00c, divw)
+    EX (0x00e, remw)
     default: exec_inv(s);
   }
 }
@@ -46,6 +72,7 @@ static inline def_EHelper(r2r){
     EX (0x105, sra)
     EX (0x006, or)
     EX (0x007, and)
+    EX (0x008, mul)
     default: exec_inv(s);
   }
 }
@@ -75,7 +102,7 @@ static inline def_EHelper(branch){
     EX (1, bne)
     EX (4, blt)
     EX (5, bge)
-    // EX (6, bltu)
+    EX (6, bltu)
     // EX (7, bgeu)
     default: exec_inv(s);
   }
@@ -96,7 +123,8 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     IDEX (0b00101, U, auipc)
     IDEX (0b11011, J, jal)
     IDEX (0b00100, I, r2i)
-    IDEX (0b00110, I, addiw)
+    IDEX (0b00110, I, i32)
+    // IDEX (0b00110, I, addiw)
     EX   (0b11010, nemu_trap)
     IDEX (0b11001, I, jalr)
     default: exec_inv(s);

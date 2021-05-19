@@ -13,15 +13,15 @@
 //   print_asm_template3(divuw);
 // }
 
-// static inline make_EHelper(divw) {
-//   rtl_divw(s,ddest,dsrc1,dsrc2);
-//   print_asm_template3(divw);
-// }
+static inline def_EHelper(divw) {
+  rtl_divw(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(divw);
+}
 
-// static inline make_EHelper(mul) {
-//   rtl_imul_lo(s,ddest,dsrc1,dsrc2);
-//   print_asm_template3(mul);
-// }
+static inline def_EHelper(mul) {
+  rtl_imul_lo(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(mul);
+}
 
 // static inline make_EHelper(mulh) {
 //   rtl_imul_hi(s,ddest,dsrc1,dsrc2);
@@ -38,7 +38,13 @@
 //   print_asm_template3(mulhu);
 // }
 
-// static inline make_EHelper(mulw) {
-//   rtl_mulw(s,ddest,dsrc1,dsrc2);
-//   print_asm_template3(mulw);
-// }
+static inline def_EHelper(mulw) {
+  rtl_mulw(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(mulw);
+}
+
+
+static inline def_EHelper(remw) {
+  rtl_remw(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(divw);
+}

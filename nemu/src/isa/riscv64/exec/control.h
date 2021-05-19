@@ -43,9 +43,13 @@ static inline def_EHelper(bne) {
 
 static inline def_EHelper(blt) {
   rtl_jrelop(s, RELOP_LT, dsrc1, dsrc2, s->jmp_pc);
-  print_asm_template3(bge);
+  print_asm_template3(blt);
 }
 
+static inline def_EHelper(bltu) {
+  rtl_jrelop(s, RELOP_LTU, dsrc1, dsrc2, s->jmp_pc);
+  print_asm_template3(bltu);
+}
 
 static inline def_EHelper(bge) {
   rtl_jrelop(s, RELOP_GE, dsrc1, dsrc2, s->jmp_pc);

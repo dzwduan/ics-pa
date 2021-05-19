@@ -124,6 +124,7 @@ static inline def_EHelper(srai) {
   print_asm_template3(srai);
 }
 
+
 static inline def_EHelper(sraiw) {
   rtl_sariw(s,ddest,dsrc1,id_src2->imm);
   print_asm_template3(sraiw);
@@ -137,22 +138,22 @@ static inline def_EHelper(sraw) {
 
 static inline def_EHelper(srl) {
   rtl_shr(s,ddest,dsrc1,dsrc2);
-  print_asm_template3(sra);
+  print_asm_template3(srl);
 }
 
 static inline def_EHelper(srli) {
   rtl_shri(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(srai);
+  print_asm_template2(srli);
 }
 
 static inline def_EHelper(srliw) {
   rtl_shriw(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(srai);
+  print_asm_template3(srliw);
 }
 
 static inline def_EHelper(srlw) {
   rtl_shrw(s,ddest,dsrc1,dsrc2);
-  print_asm_template2(sraw);
+  print_asm_template3(srlw);
 }
 
 
