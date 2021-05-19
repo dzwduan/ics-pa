@@ -8,38 +8,63 @@ static inline void set_width(DecodeExecState *s, int width) {
 
 static inline def_EHelper(load) {
   switch (s->isa.instr.i.funct3) {
-    EXW  (2, lws, 4)
+    EXW  (2, lws,4)
     EXW  (3, ld, 8)
+    EXW  (4, ld, 1)  //从一个字节加载 lbu
     default: exec_inv(s);
   }
 }
 
 static inline def_EHelper(store) {
   switch (s->isa.instr.s.funct3) {
+    EXW  (0, st, 1)
+    EXW  (1, st, 2)  //只存低两位
     EXW  (3, st, 8)
+
     default: exec_inv(s);
   }
 }
 
 static inline def_EHelper(r2rw){
   switch (s->isa.instr.r.funct3 | (s->isa.instr.r.funct7<<3)) {
-    EX (0x0,addw)
+    EX (0x000, addw)
+    EX (0x001, sllw)
     default: exec_inv(s);
   }
 }
 
 static inline def_EHelper(r2r){
   switch (s->isa.instr.r.funct3 | (s->isa.instr.r.funct7<<3)) {
-    EX (0x100,sub)
+    EX (0x000, add)
+    EX (0x100, sub)
+    EX (0x001, sll)
+    EX (0x002, slt)
+    EX (0x003, sltu)
+    EX (0x004, xor)
+    EX (0x005, srl)
+    EX (0x105, sra)
+    EX (0x006, or)
+    EX (0x007, and)
     default: exec_inv(s);
   }
 }
 
 static inline def_EHelper(r2i){
+  if(s->isa.instr.i.funct3!=5)
   switch (s->isa.instr.i.funct3) {
     EX (0, addi)
+    EX (2, slti)
     EX (3, sltiu)
+    EX (4, xori)
+    EX (6, ori)
+    EX (7, andi)
+    EX (1, slli)
     default: exec_inv(s);
+  }else{
+    switch (s->isa.instr.i.simm11_0>>6){
+      EX(0x00, srli)
+      EX(0x10, srai)
+    }
   }
 }
 
@@ -47,10 +72,10 @@ static inline def_EHelper(branch){
   switch (s->isa.instr.b.funct3) {
     EX (0, beq)
     EX (1, bne)
-    // EX (2, blt)
-    // EX (3, bge)
-    // EX (4, bltu)
-    // EX (5, bgeu)
+    // EX (4, blt)
+    // EX (5, bge)
+    // EX (6, bltu)
+    // EX (7, bgeu)
     default: exec_inv(s);
   }
 }
@@ -93,3 +118,4 @@ vaddr_t isa_exec_once() {
 
   return s.seq_pc;
 }
+

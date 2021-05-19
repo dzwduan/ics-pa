@@ -12,6 +12,8 @@ static inline def_EHelper(ld) {
   }
 }
 
+//M[*dsrc1+imm] = ddest
+//M[x[rs1] + sext(offset)] = x[rs2][15:0]
 static inline def_EHelper(st) {
   rtl_sm(s, dsrc1, id_src2->imm, ddest, s->width);
 

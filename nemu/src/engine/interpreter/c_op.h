@@ -15,7 +15,9 @@
 #define c_or(a, b)  ((a) | (b))
 #define c_xor(a, b) ((a) ^ (b))
 #define c_shl(a, b) ((a) << ((b) & c_shift_mask))
+//逻辑
 #define c_shr(a, b) ((a) >> ((b) & c_shift_mask))
+//算数
 #define c_sar(a, b) ((sword_t)(a) >> ((b) & c_shift_mask))
 
 #ifdef ISA64
@@ -30,6 +32,9 @@
 #define c_mul_lo(a, b) ((a) * (b))
 #define c_imul_lo(a, b) ((sword_t)(a) * (sword_t)(b))
 #ifdef ISA64
+//add new mulhsu
+# define c_mulshu(a,b)  a>0?(((sword_t)(a)*(__int128_t)(sword_t)(b))>> 64) : \
+                            (((sword_t)(2^64-a)*(__int128_t)(sword_t)(b))>> 64)
 # define c_mul_hi(a, b) (((__uint128_t)(a) * (__uint128_t)(b)) >> 64)
 # define c_imul_hi(a, b) (((__int128_t)(sword_t)(a) * (__int128_t)(sword_t)(b)) >> 64)
 # define c_mulw(a, b) c_sext32to64((a) * (b))

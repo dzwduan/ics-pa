@@ -28,8 +28,8 @@ static inline def_EHelper(jalr) {
 //if (rs1 == rs2) pc += sext(offset)
 static inline def_EHelper(beq) {
   //if(*dsrc1 == *dsrc2) rtl_j(s,s->jmp_pc);
-  rtl_jrelop(s,RELOP_EQ,dsrc1,dsrc2,s->jmp_pc);
-  print_asm_template2(beq);
+  rtl_jrelop(s,RELOP_EQ, dsrc1, dsrc2, s->jmp_pc);
+  print_asm_template3(beq);
 }
 
 //if (rs1 ≠ rs2) pc += sext(offset)
@@ -38,8 +38,9 @@ static inline def_EHelper(bne) {
   //printf("bne started\n");
   //printf("0x%lx, 0x%lx, jmp_pc=0x%lx\n",*dsrc1, *dsrc2,s->jmp_pc);
   rtl_jrelop(s, RELOP_NE, dsrc1, dsrc2, s->jmp_pc);
-  print_asm_template2(bne);
+  print_asm_template3(bne);
 }
+
 
 // static inline make_EHelper(blt) {
 //   rtl_jrelop(s, RELOP_LT, dsrc1, dsrc2, s->jmp_pc);

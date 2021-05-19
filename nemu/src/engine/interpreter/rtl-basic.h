@@ -101,15 +101,17 @@ static inline def_rtl(idiv64_r, rtlreg_t* dest,
 }
 
 // memory
-
+//读取从(*addr+offset)地址起始len长度的值到dest上
 static inline def_rtl(lm, rtlreg_t *dest, const rtlreg_t* addr, word_t offset, int len) {
   *dest = vaddr_read(*addr + offset, len);
 }
 
+//将src1的值写入到addr+偏移量所对应的地址上去
 static inline def_rtl(sm, const rtlreg_t* addr, word_t offset, const rtlreg_t* src1, int len) {
   vaddr_write(*addr + offset, *src1, len);
 }
 
+//读从addr偏移offset地址上的值到dest上
 static inline def_rtl(lms, rtlreg_t *dest, const rtlreg_t* addr, word_t offset, int len) {
   word_t val = vaddr_read(*addr + offset, len);
   switch (len) {
@@ -120,6 +122,7 @@ static inline def_rtl(lms, rtlreg_t *dest, const rtlreg_t* addr, word_t offset, 
   }
 }
 
+//dest <- M[addr]
 static inline def_rtl(host_lm, rtlreg_t* dest, const void *addr, int len) {
   switch (len) {
     case 4: *dest = *(uint32_t *)addr; return;
@@ -129,6 +132,7 @@ static inline def_rtl(host_lm, rtlreg_t* dest, const void *addr, int len) {
   }
 }
 
+//*addr = *src1
 static inline def_rtl(host_sm, void *addr, const rtlreg_t *src1, int len) {
   switch (len) {
     case 4: *(uint32_t *)addr = *src1; return;
@@ -139,17 +143,18 @@ static inline def_rtl(host_sm, void *addr, const rtlreg_t *src1, int len) {
 }
 
 // control
-
+//vaddr类型跳
 static inline def_rtl(j, vaddr_t target) {
   s->jmp_pc = target;
   s->is_jmp = true;
 }
-
+//rtlreg_t* jmp
 static inline def_rtl(jr, rtlreg_t *target) {
   s->jmp_pc = *target;
   s->is_jmp = true;
 }
 
+//满足relop条件则跳到target
 static inline def_rtl(jrelop, uint32_t relop,
     const rtlreg_t *src1, const rtlreg_t *src2, vaddr_t target) {
   bool is_jmp = interpret_relop(relop, *src1, *src2);
