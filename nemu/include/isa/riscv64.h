@@ -45,7 +45,7 @@ typedef struct {
       int32_t  simm31_12 :20;
     } u;
 
-    //implement left
+    //implement more type
     //这些格式的立即数字段总是符号扩展，符号位总是在指令中最高位！！！
     struct{
       uint32_t opcode1_0 : 2;

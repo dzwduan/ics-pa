@@ -19,6 +19,7 @@ static inline def_EHelper(store) {
   switch (s->isa.instr.s.funct3) {
     EXW  (0, st, 1)
     EXW  (1, st, 2)  //只存低两位
+    EXW  (2, st, 4)  //sw 低4字节
     EXW  (3, st, 8)
 
     default: exec_inv(s);
@@ -72,8 +73,8 @@ static inline def_EHelper(branch){
   switch (s->isa.instr.b.funct3) {
     EX (0, beq)
     EX (1, bne)
-    // EX (4, blt)
-    // EX (5, bge)
+    EX (4, blt)
+    EX (5, bge)
     // EX (6, bltu)
     // EX (7, bgeu)
     default: exec_inv(s);
