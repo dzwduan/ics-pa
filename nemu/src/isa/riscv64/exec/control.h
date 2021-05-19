@@ -58,15 +58,15 @@ static inline def_EHelper(bge) {
 
 
 
-// static inline make_EHelper(bltu) {
+// static inline def_EHelper(bltu) {
 //   rtl_jrelop(s, RELOP_LTU, dsrc1, dsrc2, s->jmp_pc);
 //   print_asm_template3(bltu);
 // }
 
-// static inline make_EHelper(bgeu){
-//   rtl_jrelop(s, RELOP_GEU, dsrc1, dsrc2, s->jmp_pc);
-//   print_asm_template3(bgeu);
-// }
+static inline def_EHelper(bgeu) {
+  rtl_jrelop(s, RELOP_GEU, dsrc1, dsrc2, s->jmp_pc);
+  print_asm_template3(bgeu);
+}
 
 
 

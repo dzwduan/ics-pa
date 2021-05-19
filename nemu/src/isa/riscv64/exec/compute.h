@@ -27,29 +27,29 @@ static inline def_EHelper(add) {
 //x[rd] = sext((x[rs1] + sext(immediate))[31:0])
 static inline def_EHelper(addiw) {
   rtl_addiw(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(addiw);
+  print_asm_template3(addiw);
 }
 
 
 static inline def_EHelper(addw) {
   rtl_addw(s,ddest,dsrc1,dsrc2);
-  print_asm_template2(addw);
+  print_asm_template3(addw);
 }
 
 static inline def_EHelper(sub) {
   rtl_sub(s,ddest,dsrc1,dsrc2);
-  print_asm_template2(sub);
+  print_asm_template3(sub);
 }
 
 static inline def_EHelper(subw) {
   rtl_subw(s,ddest,dsrc1,dsrc2);
-  print_asm_template2(subw);
+  print_asm_template3(subw);
 }
 
 //r-type  c_shift_mask 0x3f
 static inline def_EHelper(sll) {
   rtl_shl(s,ddest,dsrc1,dsrc2);
-  print_asm_template2(sll);
+  print_asm_template3(sll);
 }
 
 //i-type x[rd] = x[rs1] ≪ shamt
@@ -92,7 +92,7 @@ static inline def_EHelper(slti) {
 static inline def_EHelper(sltiu) {
   //*ddest = (*dsrc1 < id_src2->imm);
   rtl_setrelopi(s,RELOP_LTU,ddest,dsrc1, id_src2->imm);
-  print_asm_template2(sltiu);
+  print_asm_template3(sltiu);
 }
 
 // static inline def_EHelper(sltz) {
@@ -143,7 +143,7 @@ static inline def_EHelper(srl) {
 
 static inline def_EHelper(srli) {
   rtl_shri(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(srli);
+  print_asm_template3(srli);
 }
 
 static inline def_EHelper(srliw) {
@@ -175,16 +175,16 @@ static inline def_EHelper(or) {
 
 static inline def_EHelper(ori) {
   rtl_ori(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(ori);
+  print_asm_template3(ori);
 }
 
 static inline def_EHelper(and) {
   rtl_and(s,ddest,dsrc1,dsrc2);
-  print_asm_template2(and);
+  print_asm_template3(and);
 }
 
 static inline def_EHelper(andi) {
   rtl_andi(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(andi);
+  print_asm_template3(andi);
 }
 

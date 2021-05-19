@@ -103,7 +103,7 @@ static inline def_EHelper(branch){
     EX (4, blt)
     EX (5, bge)
     EX (6, bltu)
-    // EX (7, bgeu)
+    EX (7, bgeu)
     default: exec_inv(s);
   }
 }
