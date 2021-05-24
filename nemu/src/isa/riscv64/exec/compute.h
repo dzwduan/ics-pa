@@ -56,7 +56,7 @@ static inline def_EHelper(sll) {
 static inline def_EHelper(slli) {
   //*s0 = id_src2->imm&0x3f;
   rtl_shli(s,ddest,dsrc1,id_src2->imm);
-  print_asm_template2(slli);
+  print_asm_template3(slli);
 }
 
 static inline def_EHelper(slliw) {

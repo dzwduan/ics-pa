@@ -1,121 +1,130 @@
 #include <am.h>
-#include <klib.h>
 #include <klib-macros.h>
+#include <klib.h>
 #include <stdarg.h>
-#include <assert.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-//num to string
-char * i2a(int n,int radix) { 
-    printf("func i2a started\n");
-    char digit[] ="0123456789ABCDEF";
-    char res[16];
-    char *ret = res;
-    char *p = res;
-    char *h = res;
-    if(n==0) {
-        *p++ ='0';
-        *p = '\0';
-        return ret;
-    }
-    if(n<0 && radix==10) {
-        *p++ = '-';
-        n = -n;
-    }
-    if(n<0 && radix!=0) {
-        return 0;
-    }
+#define is_digit(c) ((c)>='0' &&(c)<='9')
 
-    while(n) {
-        *p++ = digit[n%radix];
-        n/=radix;
-    }
-    *p = '\0';
-    //printf("ret : %s\n",ret);
-    //这里不能使用!=,如果数字个数是偶数就会失败
-    for(--p;h<p;h++,p--){
-        char tmp = *h;
-        *h = *p;
-        *p = tmp;
-    }
-    //printf("in func i2a %s \n",res);
-    return ret;
+
+char buf[1024];
+
+
+/**
+ * @brief 转换int 到 string
+ * 
+ * @param n 
+ * @param radix 
+ * @param ret 
+ * @return int 
+ */
+int i2a(int n,int base,char *ret) { 
+  
+  int flag = 0;
+  if(n<0) flag =1, n=-n;
+
+  char buf[16];
+  int i=0,j=0;
+  while(n>0){
+    buf[i++] = n%base + '0';
+    n/=base;
+  }
+
+  if(flag == 1) buf[i++]='-';
+  buf[i]='\0';
+
+  for(j=i-1;j>=0;j--){
+    if(is_digit(buf[i-j-1]) || buf[i-j-1]=='-')
+      ret[j] = buf[i-j-1];
+    else
+      ret[j] = buf[i-j-1]-'9'+'a'-1;
+  }
+  ret[i] = '\0';
+ 
+  return i;
 }
 
-int print(const char *fmt, ...) {
+int printf(const char *fmt, ...) {
   va_list ap;
-  va_start(ap,fmt);
-  char tmp[128];
-  char *p = tmp;
-  int ret = vsprintf(tmp,fmt,ap);
-  while(*p) {
-    putchar(*p);
-    p++;
-  }
-  return ret;
-}
-
-int vsprint(char *out, const char *fmt, va_list ap) {
-  int len = 0;
-  //va_start(ap,fmt);
-  char *p = out; //结束后out不能改变
-  int n;
-  char *s;
-  while(*fmt) {
-    if(*fmt=='%'){
-      switch(*++fmt) {
-        case 'd':
-          n = va_arg(ap,int);
-          s = i2a(n,10);
-          strcat(p,s);
-          len += strlen(s);
-          p   += strlen(s);
-          break;
-        case 'x':
-          n = va_arg(ap,int);
-          s = i2a(n,16);
-          strcat(p,s);
-          len += strlen(s);
-          p   += strlen(s);
-          break;
-        case 'c':
-          n = va_arg(ap,int);
-          *p++ = n+'0';
-          len++;
-          break;
-        case 's':
-          s = va_arg(ap,char *);
-          strcat(out,s);
-          printf("in s : %s\n",p);
-          len += strlen(s);
-          p   += strlen(s);
-          break;
-        default: assert(0);
-      }
-    }
-    else{
-      *p++ = *fmt;
-      len++;
-    }
-    fmt++;
-  }
-
-  *p = '\0';
+  va_start(ap, fmt);
+  int len = vsprintf(buf,fmt,ap);
   va_end(ap);
+  size_t i = 0;
+  while(buf[i] != '\0') {
+    putch(buf[i]);
+    i++;
+  }
   return len;
 }
 
+int vsprintf(char *out, const char *fmt, va_list ap) {
+   int arg_int;
+  char *arg_s;
+  int len=0;
+  int base=10;
+  size_t pos=0;
+
+  while(*fmt){
+    switch(*fmt){
+    case '%':
+      ++fmt;
+      switch(*fmt){
+        case 'd': 
+          base = 10;
+          arg_int = va_arg(ap, int);
+          len = i2a(arg_int,base,out+pos);
+          pos+=len;
+          break;
+        case 'x':
+          base = 16;
+          arg_int = va_arg(ap, int);
+          len = i2a(arg_int,base,out+pos);
+          pos+=len;
+          break;
+        case 's': 
+          arg_s = va_arg(ap,char *);
+          strcat(out,arg_s);
+          len = strlen(arg_s);
+          pos+=len;
+          break;
+        case 'c':
+          arg_int = va_arg(ap,int);
+          out[pos] = arg_int+'0';
+          pos++;
+          break;
+        default: break;
+      }
+    break;
+    default: 
+
+    out[pos++]=*fmt;
+    break;
+  }
+  fmt++;
+  }
+  out[pos] = '\0';
+  va_end(ap);
+  return pos;
+}
+
 int sprintf(char *out, const char *fmt, ...) {
-  return 0;
+    //memset(buf,0,sizeof(char)*1024);
+    va_list ap;
+    va_start(ap, fmt);
+    int ret = vsprintf(out, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
-  return 0;
+    assert(0);
+    return 0;
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-  return 0;
+    assert(0);
+    return 0;
 }
 
 #endif

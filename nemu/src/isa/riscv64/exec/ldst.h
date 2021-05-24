@@ -23,7 +23,7 @@ static inline def_EHelper(st) {
     case 8: print_asm_template2(sd); break;
     case 4: print_asm_template2(sw); break;
     case 2: print_asm_template2(sh); break;
-    case 1: printf("started sb\n");print_asm_template2(sb);  break;
+    case 1: print_asm_template2(sb);  break;
     default: assert(0);
   }
 }
