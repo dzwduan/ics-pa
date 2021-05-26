@@ -15,6 +15,7 @@ static inline def_EHelper(load) {
     EXW  (3, ld, 8)
     EXW  (4, ld, 1)  //从一个字节加载 lbu
     EXW  (5, ld, 2)  //lhu
+    EXW  (6, ld, 4)
     default: exec_inv(s);
   }
 }

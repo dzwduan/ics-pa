@@ -56,6 +56,7 @@ void __am_gpu_status(AM_GPU_STATUS_T *stat) {
   stat->ready = true;
 }
 
+
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   int x = ctl->x, y = ctl->y, w = ctl->w, h = ctl->h;
   uint32_t *pixels = ctl->pixels;

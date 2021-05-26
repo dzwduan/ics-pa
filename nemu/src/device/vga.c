@@ -37,9 +37,16 @@ static inline void update_screen() {
 #endif
 }
 
+//参考gpu.c里面的SYNC
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
+  uint32_t sync = vgactl_port_base[1];
+  if(sync == 1)
+  {
+    update_screen();
+    vgactl_port_base[1] = 0;
+  }
 }
 
 void init_vga() {
@@ -59,11 +66,13 @@ void init_vga() {
 #endif
 
   vgactl_port_base = (void *)new_space(8);
+  //高2字节是W,低2字节是高度,第4个字节是SYNC
   vgactl_port_base[0] = ((SCREEN_W) << 16) | (SCREEN_H);
   add_pio_map("screen", VGACTL_PORT, (void *)vgactl_port_base, 8, NULL);
   add_mmio_map("screen", VGACTL_MMIO, (void *)vgactl_port_base, 8, NULL);
 
   vmem = (void *)new_space(SCREEN_SIZE);
+  //vga的虚存
   add_mmio_map("vmem", VMEM, (void *)vmem, SCREEN_SIZE, NULL);
 }
 #endif	/* HAS_IOE */

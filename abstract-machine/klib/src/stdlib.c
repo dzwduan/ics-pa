@@ -33,9 +33,20 @@ int atoi(const char* nptr) {
 每次调用malloc()时, 就返回[addr, addr + size)这段空间. 
 addr的初值设为heap.start, 表示从堆区开始分配. 
 */
+
+static char * addr = NULL;
 void *malloc(size_t size) {
-  void * addr = heap.start;
-  
+  if(!addr) addr = (void*)ROUNDUP(heap.start,8);
+  if(size ==  0) return (void *)addr;
+  //分配空间
+  void * ret = addr;
+  addr += ROUNDUP(size,8);
+  //空间清零
+  char * p = (char *)ret;
+  while(p!=addr){
+    *p++ = 0;
+  }
+  return ret;
 }
 
 void free(void *ptr) {
