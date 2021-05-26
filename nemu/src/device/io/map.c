@@ -27,6 +27,7 @@ static inline void invoke_callback(io_callback_t c, paddr_t offset, int len, boo
   if (c != NULL) { c(offset, len, is_write); }
 }
 
+//从addr开始读len字节
 word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
@@ -37,6 +38,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   return data;
 }
 
+//写len字节data到addr
 void map_write(paddr_t addr, word_t data, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);

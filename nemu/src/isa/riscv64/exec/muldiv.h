@@ -3,10 +3,10 @@
 //   print_asm_template3(div);
 // }
 
-// static inline make_EHelper(divu) {
-//   rtl_div_q(s,ddest,dsrc1,dsrc2);
-//   print_asm_template3(divu);
-// }
+static inline def_EHelper(divu) {
+  rtl_div_q(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(divu);
+}
 
 // static inline make_EHelper(divuw) {
 //   rtl_divuw(s,ddest,dsrc1,dsrc2);

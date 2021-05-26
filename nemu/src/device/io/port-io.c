@@ -7,16 +7,17 @@ static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
 /* device interface */
+// 增加IO映射
 void add_pio_map(char *name, ioaddr_t addr, uint8_t *space, int len, io_callback_t callback) {
   assert(nr_map < NR_MAP);
   assert(addr + len <= PORT_IO_SPACE_MAX);
   maps[nr_map] = (IOMap){ .name = name, .low = addr, .high = addr + len - 1,
     .space = space, .callback = callback };
   Log("Add port-io map '%s' at [0x%08x, 0x%08x]", maps[nr_map].name, maps[nr_map].low, maps[nr_map].high);
-
   nr_map ++;
 }
 
+//从addr读len字节
 uint32_t pio_read_common(ioaddr_t addr, int len) {
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
@@ -24,6 +25,7 @@ uint32_t pio_read_common(ioaddr_t addr, int len) {
   return map_read(addr, len, &maps[mapid]);
 }
 
+//向addr写len字节
 void pio_write_common(ioaddr_t addr, uint32_t data, int len) {
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);
   int mapid = find_mapid_by_addr(maps, nr_map, addr);

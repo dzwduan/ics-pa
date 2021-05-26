@@ -73,6 +73,7 @@ static inline def_EHelper(r2r){
     EX (0x006, or)
     EX (0x007, and)
     EX (0x008, mul)
+    EX (0x00d, divu)
     default: exec_inv(s);
   }
 }
