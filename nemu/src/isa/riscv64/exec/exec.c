@@ -9,6 +9,7 @@ static inline void set_width(DecodeExecState *s, int width) {
 static inline def_EHelper(load) {
   switch (s->isa.instr.i.funct3) {
     //lws这个命名有问题，但是懒得改了
+    EXW  (0, lws, 1)
     EXW  (1, lws, 2)
     EXW  (2, lws, 4)
     EXW  (3, ld, 8)
@@ -55,7 +56,9 @@ static inline def_EHelper(r2rw){
     EX (0x005, srlw)
     EX (0x008, mulw)
     EX (0x00c, divw)
+    EX (0x00d, divuw)
     EX (0x00e, remw)
+    EX (0x00f, remuw)
     default: exec_inv(s);
   }
 }
@@ -82,12 +85,13 @@ static inline def_EHelper(r2i){
   if(s->isa.instr.i.funct3!=5)
   switch (s->isa.instr.i.funct3) {
     EX (0, addi)
+    EX (1, slli)
     EX (2, slti)
     EX (3, sltiu)
     EX (4, xori)
     EX (6, ori)
     EX (7, andi)
-    EX (1, slli)
+   
     default: exec_inv(s);
   }else{
     switch (s->isa.instr.i.simm11_0>>6){

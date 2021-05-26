@@ -28,9 +28,14 @@ int atoi(const char* nptr) {
   }
   return x;
 }
-
+/*
+在malloc()中维护一个上次分配内存位置的变量addr, 
+每次调用malloc()时, 就返回[addr, addr + size)这段空间. 
+addr的初值设为heap.start, 表示从堆区开始分配. 
+*/
 void *malloc(size_t size) {
-  return NULL;
+  void * addr = heap.start;
+  
 }
 
 void free(void *ptr) {

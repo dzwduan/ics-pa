@@ -8,10 +8,10 @@ static inline def_EHelper(divu) {
   print_asm_template3(divu);
 }
 
-// static inline make_EHelper(divuw) {
-//   rtl_divuw(s,ddest,dsrc1,dsrc2);
-//   print_asm_template3(divuw);
-// }
+static inline def_EHelper(divuw) {
+  rtl_divuw(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(divuw);
+}
 
 static inline def_EHelper(divw) {
   rtl_divw(s, ddest, dsrc1, dsrc2);
@@ -43,8 +43,22 @@ static inline def_EHelper(mulw) {
   print_asm_template3(mulw);
 }
 
+static inline def_EHelper(rem) {
+  rtl_idiv_r(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(rem);
+}
+
+static inline def_EHelper(remu) {
+  rtl_div_r(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(remu);
+}
 
 static inline def_EHelper(remw) {
   rtl_remw(s, ddest, dsrc1, dsrc2);
-  print_asm_template3(divw);
+  print_asm_template3(remw);
+}
+
+static inline def_EHelper(remuw) {
+  rtl_remuw(s, ddest, dsrc1, dsrc2);
+  print_asm_template3(remuw);
 }

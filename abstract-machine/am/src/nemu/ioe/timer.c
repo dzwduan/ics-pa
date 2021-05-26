@@ -6,14 +6,16 @@
 uint32_t high,low;
 
 void __am_timer_init() {
-    high = inl(0xa1000048);
-    low  = inl(0xa100004c);
+    high = inl(0xa100004c);
+    low  = inl(0xa1000048);
 }
 
 // static struct timeval boot_time = {};
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-    uptime->us = high * 1000000 + (low + 500);
+    uint32_t cur_high = inl(0xa100004c);
+    uint32_t cur_low  = inl(0xa1000048);
+    uptime->us = (cur_high-high) * 1000000 + (cur_low-low + 500);
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
