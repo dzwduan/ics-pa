@@ -114,6 +114,21 @@ static inline def_EHelper(branch){
   }
 }
 
+static inline def_EHelper(system) {
+  switch (s->isa.instr.i.funct3) {
+    IDEX  (0, CSR, inter) //ecall sret ebreak需要分类讨论
+    IDEX  (1, CSR, csrrw)
+    IDEX  (2, CSR, csrrs)
+    // IDEX  (3, CSR, csrrc)
+    // IDEX  (5, CSRI, csrrwi)  
+    // IDEX  (6, CSRI, cssrrsi)  
+    // IDEX  (7, CSRI, csrrci)
+    default: exec_inv(s);
+  }
+}
+
+
+
 static inline void fetch_decode_exec(DecodeExecState *s) {
   s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
   //opcode第0 1 位都必须为1
@@ -133,6 +148,7 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     // IDEX (0b00110, I, addiw)
     EX   (0b11010, nemu_trap)
     IDEX (0b11001, I, jalr)
+    IDEX (0b11100, CSR, system)
     default: exec_inv(s);
   }
 }

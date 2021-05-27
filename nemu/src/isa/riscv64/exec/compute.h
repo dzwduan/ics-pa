@@ -123,7 +123,7 @@ static inline def_EHelper(srai) {
   printf("dest value is 0x%lx\n",*ddest);
   print_asm_template3(srai);
 }
-
+ 
 
 static inline def_EHelper(sraiw) {
   rtl_sariw(s,ddest,dsrc1,id_src2->imm);

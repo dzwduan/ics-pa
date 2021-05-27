@@ -16,6 +16,37 @@ typedef struct {
   } gpr[32];
 
   vaddr_t pc;
+
+  //S-mode CSR
+  vaddr_t sepc; //保存当前pc值
+  vaddr_t scause;//设置异常号
+  vaddr_t stvec; //保存异常入口地址
+  vaddr_t sscratch;
+  vaddr_t stval;
+
+  union{
+    struct{
+      uint32_t uie     : 1;
+      uint32_t sie     : 1;
+      uint32_t pad2_3  : 2;
+      uint32_t upie    : 1;
+      uint32_t spie    : 1;
+      uint32_t pad6_7  : 2;
+      uint32_t spp     : 1;
+      uint32_t pad9_12 : 4;
+      uint32_t FS      : 2;
+      uint32_t XS      : 2;
+    };
+    uint32_t val;
+  }sstatus;
+
+  //M-mode CSR 
+  //M 模式下运行时，只有在全局中断使能位 mstatus.MIE 置 1 时才会产生中断.
+  //vaddr_t mtvec,mepc,mcause,mie,mip,mtval,msrcatch,mstatus;
+
+  //csrs一共有12位，共4096个
+  //vaddr_t CSRS[4096];
+
 } riscv64_CPU_state;
 
 // decode 立即数都是有符号数
@@ -79,6 +110,16 @@ typedef struct {
       uint32_t imm10_1   : 10;
       int32_t  simm20    : 1;
     }j;
+
+    struct{
+      uint32_t opcode1_0 : 2;
+      uint32_t opcode6_2 : 5;
+      uint32_t rd        : 5;
+      uint32_t funct3    : 3;
+      uint32_t rs1       : 5;
+      //寄存器编号，使用无符号数
+      uint32_t csr       : 12;
+    }csr;
     uint32_t val;
   } instr;
 } riscv64_ISADecodeInfo;

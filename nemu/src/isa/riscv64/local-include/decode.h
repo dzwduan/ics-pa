@@ -70,10 +70,16 @@ static inline def_DHelper(B) {
   //decode_op_r(s,id_dest,s->isa.instr.j.rd, false);
 }
 
-static inline def_DHelper(C_LW){
-  TODO();
+static inline def_DHelper(CSR){
+  decode_op_r(s, id_src1, s->isa.instr.csr.rs1, true);
+  //csr是立即数
+  decode_op_i(s, id_src2, (sword_t)s->isa.instr.csr.csr, true);
+  decode_op_r(s, id_dest, s->isa.instr.csr.rd, false);
 }
 
-static inline def_DHelper(C_LWSP){
-  TODO();
+static inline def_DHelper(CSRI){
+  //rs1 == simm
+  decode_op_i(s, id_src1, s->isa.instr.csr.rs1, true);
+  decode_op_i(s, id_src2, (sword_t)s->isa.instr.csr.csr, true);
+  decode_op_r(s, id_dest, s->isa.instr.csr.rd, false);
 }
