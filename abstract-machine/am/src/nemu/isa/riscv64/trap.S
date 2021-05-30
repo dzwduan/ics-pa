@@ -30,8 +30,7 @@ __am_asm_trap:
 
   csrr t0, scause
   csrr t1, sstatus
-  csrr t2, sepc
-
+  csrr t2, sepc  
   sd t0, OFFSET_CAUSE(sp)
   sd t1, OFFSET_STATUS(sp)
   sd t2, OFFSET_EPC(sp)

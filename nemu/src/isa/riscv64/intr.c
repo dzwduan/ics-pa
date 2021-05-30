@@ -16,10 +16,12 @@ void raise_intr(DecodeExecState *s, word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * That is, use ``NO'' to index the IDT.
    */
-  cpu.sepc = epc;
+  //printf("get in raise_intr\n");
+  cpu.sepc   = epc;
   cpu.scause = NO;
   cpu.sstatus.spie = cpu.sstatus.sie;
-  cpu.sstatus.sie = 0;
+  cpu.sstatus.sie  = 0;
+  //printf("in raise_intr cpu.stvec : 0x%lx\n",cpu.stvec);
   rtl_j(s,cpu.stvec);
 }
 

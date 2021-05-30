@@ -3,22 +3,22 @@
 //rtl_mv  *dst = *src
 
 //返回值与s0 s1一致
-static inline rtlreg_t encode_csr(uint32_t csr) {
-  rtlreg_t ret = 0;
+static inline rtlreg_t* encode_csr(uint32_t csr) {
+  rtlreg_t *ret = (void*)0;
   switch(csr) {
     //supervisor trap setup
-    case 0x100: ret=cpu.sstatus.val;break;
+    case 0x100: ret=(rtlreg_t *)&cpu.sstatus.val;break;
     //case 0x102: ret=&cpu.sedeleg    ;break;  
     //case 0x103: ret=&cpu.sideleg    ;break;
     //case 0x104: ret=&cpu.sstatus.sie        ;break;
-    case 0x105: ret=cpu.stvec      ;break;
+    case 0x105: ret=(rtlreg_t *)&cpu.stvec      ;break;
     //case 0x106: ret=&cpu.scounteren;break;
 
     //supervisor trap setup
-    case 0x140: ret=cpu.sscratch   ;break;
-    case 0x141: ret=cpu.sepc       ;break;
-    case 0x142: ret=cpu.scause     ;break;
-    case 0x143: ret=cpu.stval      ;break;
+    case 0x140: ret=(rtlreg_t *)&cpu.sscratch   ;break;
+    case 0x141: ret=(rtlreg_t *)&cpu.sepc       ;break;
+    case 0x142: ret=(rtlreg_t *)&cpu.scause     ;break;
+    case 0x143: ret=(rtlreg_t *)&cpu.stval      ;break;
     // case 0x144: ret=&cpu.sip        ;break;
     // case 0x180: ret=&cpu.satp       ;break;
 
@@ -43,6 +43,7 @@ static inline def_EHelper(inter) {
       //cpu.pc = cpu.sepc;
       cpu.sstatus.sie = cpu.sstatus.spie;
       cpu.sstatus.spie = 1;
+      //printf("in intet sret cpu.sepc : 0x%lx\n",cpu.sepc);
       rtl_j(s, cpu.sepc);
       //TODO():这里忽略了spp权限模式位
       print_asm("sret");
@@ -53,9 +54,11 @@ static inline def_EHelper(inter) {
 
 //t = CSRs[csr]; CSRs[csr] = x[rs1]; x[rd] = t
 static inline def_EHelper(csrrw) {
-  *s0 = encode_csr(id_src2->imm);
-  rtl_mv(s,s0,dsrc1);
-  rtl_mv(s,ddest,s0);
+  //t = CSRs[csr]
+  rtlreg_t* t = encode_csr(id_src2->imm);
+  rtlreg_t* t_tmp = t;
+  rtl_mv(s,t,dsrc1);
+  rtl_mv(s,ddest,t_tmp);
   print_asm_template3(csrrw);
 }
 
@@ -63,22 +66,24 @@ static inline def_EHelper(csrrw) {
 
 //t = CSRs[csr]; CSRs[csr] = t | x[rs1]; x[rd] = t
 static inline def_EHelper(csrrs) {
-  *s0 = encode_csr(id_src2->imm);
-  rtl_or(s,s1,s0,dsrc1);
-  rtl_mv(s,s0,s1);
-  rtl_mv(s,ddest,s0);
+  // printf("get in csrrs\n");
+  // printf("ddst->val : 0x%lx , dsrc->val : 0x%lx\n",*ddest,*dsrc1);
+  rtlreg_t* t = encode_csr(id_src2->imm);
+  rtlreg_t* t_tmp = t;
+  rtl_or(s,t,t,dsrc1);
+  rtl_mv(s,ddest,t_tmp);
   print_asm_template3(csrrs);
 }
 
 //t = CSRs[csr]; CSRs[csr] = t &~x[rs1]; x[rd] = t
-// static inline def_EHelper(csrrc) {
-//   s0 = encode_csr(id_src2->imm);
-//   rtl_not(s,s2,dsrc1);
-//   rtl_or(s,s1,s0,s2);
-//   rtl_mv(s,s0,s1);
-//   rtl_mv(s,ddest,s0);
-//   print_asm_template3(csrrc);
-// }
+static inline def_EHelper(csrrc) {
+  rtlreg_t* t = encode_csr(id_src2->imm);
+  rtlreg_t* t_tmp = t;
+  rtl_not(s,s0,dsrc1);
+  rtl_and(s,t,t,s0);
+  rtl_mv(s,ddest,t_tmp);
+  print_asm_template3(csrrc);
+}
 
 // //x[rd] = CSRs[csr]; CSRs[csr] = zimm
 // static inline def_EHelper(csrrwi) {

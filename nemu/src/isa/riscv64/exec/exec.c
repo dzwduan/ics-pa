@@ -119,7 +119,7 @@ static inline def_EHelper(system) {
     IDEX  (0, CSR, inter) //ecall sret ebreak需要分类讨论
     IDEX  (1, CSR, csrrw)
     IDEX  (2, CSR, csrrs)
-    // IDEX  (3, CSR, csrrc)
+    IDEX  (3, CSR, csrrc)
     // IDEX  (5, CSRI, csrrwi)  
     // IDEX  (6, CSRI, cssrrsi)  
     // IDEX  (7, CSRI, csrrci)
