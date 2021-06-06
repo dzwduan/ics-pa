@@ -12,10 +12,10 @@ static inline def_EHelper(load) {
     EXW  (0, lws, 1)
     EXW  (1, lws, 2)
     EXW  (2, lws, 4)
-    EXW  (3, ld, 8)
-    EXW  (4, ld, 1)  //从一个字节加载 lbu
-    EXW  (5, ld, 2)  //lhu
-    EXW  (6, ld, 4)
+    EXW  (3, ld,  8)
+    EXW  (4, ld,  1)  //从一个字节加载 lbu
+    EXW  (5, ld,  2)  //lhu
+    EXW  (6, ld,  4)
     default: exec_inv(s);
   }
 }
@@ -92,7 +92,6 @@ static inline def_EHelper(r2i){
     EX (4, xori)
     EX (6, ori)
     EX (7, andi)
-   
     default: exec_inv(s);
   }else{
     switch (s->isa.instr.i.simm11_0>>6){

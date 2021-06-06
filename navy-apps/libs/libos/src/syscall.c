@@ -40,12 +40,14 @@
 #error _syscall_ is not implemented
 #endif
 
+//GPR1 : _arg1 ("ecall", "a7", "a0", "a1", "a2", "a0") =  a7
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
   register intptr_t _gpr1 asm (GPR1) = type;
   register intptr_t _gpr2 asm (GPR2) = a0;
   register intptr_t _gpr3 asm (GPR3) = a1;
   register intptr_t _gpr4 asm (GPR4) = a2;
-  register intptr_t ret asm (GPRx);
+  register intptr_t ret   asm (GPRx);
+  //ret用于输出,实际是a0
   asm volatile (SYSCALL : "=r" (ret) : "r"(_gpr1), "r"(_gpr2), "r"(_gpr3), "r"(_gpr4));
   return ret;
 }
@@ -61,11 +63,26 @@ int _open(const char *path, int flags, mode_t mode) {
 }
 
 int _write(int fd, void *buf, size_t count) {
-  _exit(SYS_write);
-  return 0;
+  //_exit(SYS_write);
+  //ssize_t write(int fd, const void *buf, size_t count);
+  return _syscall_(SYS_write,fd,(intptr_t)buf,count);
 }
 
+//根据abstract machine里的ld脚本
+extern char _end;
+//program break一开始的位置位于_end
+static char * program_break = &_end;
+// SYS_brk, 它接收一个参数addr, 用于指示新的program break的位置.
 void *_sbrk(intptr_t increment) {
+  //被调用时, 根据记录的program break位置和参数increment, 计算出新program break
+  //若SYS_brk系统调用成功, 该系统调用会返回0
+  char * ret = program_break;
+  if(_syscall_(SYS_brk,program_break+increment,0,0)==0) {
+    program_break+=increment;
+    //将旧program break的位置作为_sbrk()的返回值返回
+    return ret;
+  }
+  //失败, _sbrk()会返回-1
   return (void *)-1;
 }
 

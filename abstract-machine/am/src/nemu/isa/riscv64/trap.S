@@ -20,13 +20,17 @@ f(30) f(31)
 
 .globl __am_asm_trap
 __am_asm_trap:
+ 
   addi sp, sp, -CONTEXT_SIZE
 
   MAP(REGS, PUSH)
 
   mv t0, sp
+
   addi t0, t0, CONTEXT_SIZE
+
   sd t0, OFFSET_SP(sp)
+  
 
   csrr t0, scause
   csrr t1, sstatus
