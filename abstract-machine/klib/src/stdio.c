@@ -59,7 +59,7 @@ int printf(const char *fmt, ...) {
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
-   int arg_int;
+  int arg_int;
   char *arg_s;
   int len=0;
   int base=10;
@@ -83,6 +83,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
           pos+=len;
           break;
         case 's': 
+          // putch('s');
           arg_s = va_arg(ap,char *);
           strcat(out,arg_s);
           len = strlen(arg_s);
@@ -95,11 +96,10 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
           break;
         default: break;
       }
-    break;
+      break;
     default: 
-
-    out[pos++]=*fmt;
-    break;
+      out[pos++]=*fmt;
+      break;
   }
   fmt++;
   }

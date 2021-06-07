@@ -1,5 +1,6 @@
 #include <proc.h>
 #include <elf.h>
+#include<fs.h>
 
 
 #ifdef __LP64__
@@ -22,15 +23,20 @@
 
 extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
 extern size_t get_ramdisk_size();
+extern int fs_open(const char *pathname, int flags, int mode);
+extern size_t fs_read(int fd, void *buf, size_t len);
+extern int fs_close(int fd);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   
+  int fd = fs_open(filename,0,0);
+
   Elf_Phdr * ph  = NULL;
 
-  char buf[1024];
+  char buf[4096];
   // ram -> buf , offset从0开始
 
-  ramdisk_read((void *)buf,RAMDISK_OFFSET,1024);
+  fs_read(fd,(void*)buf,4096);
   Elf_Ehdr * elf=NULL;
 
   const uint32_t ELF_MAGIC = 0x464c457f;
@@ -52,8 +58,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     memset((void *)(ph->p_vaddr+ph->p_filesz), 0, ph->p_memsz-ph->p_filesz);
   }
 
-  uintptr_t entry = elf->e_entry;
+  fs_close(fd);
 
+  uintptr_t entry = elf->e_entry;
   return entry;
 }
 
