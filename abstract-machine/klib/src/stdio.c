@@ -8,7 +8,7 @@
 #define is_digit(c) ((c)>='0' &&(c)<='9')
 
 
-char buf[1024];
+
 
 
 /**
@@ -22,16 +22,20 @@ char buf[1024];
 int i2a(int n,int base,char *ret) { 
   
   int flag = 0;
-  if(n<0) flag =1, n=-n;
+  if(n<0 ) flag =1, n=-n;
 
-  char buf[16];
+  char buf[128] = {0};
   int i=0,j=0;
+  if(n==0) { 
+    *ret = '0';
+    return 1;
+  }
   while(n>0){
     buf[i++] = n%base + '0';
     n/=base;
   }
-
-  if(flag == 1) buf[i++]='-';
+ 
+  if(flag == 1 && base == 10) buf[i++]='-';
   buf[i]='\0';
 
   for(j=i-1;j>=0;j--){
@@ -47,6 +51,7 @@ int i2a(int n,int base,char *ret) {
 
 int printf(const char *fmt, ...) {
   va_list ap;
+  char buf[4096] = {0};
   va_start(ap, fmt);
   int len = vsprintf(buf,fmt,ap);
   va_end(ap);
@@ -93,6 +98,14 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
           arg_int = va_arg(ap,int);
           out[pos] = arg_int+'0';
           pos++;
+          break;
+        case 'p':
+          out[pos++] = '0';
+          out[pos++] = 'x';
+          base = 16;
+          arg_int = va_arg(ap, int);
+          len = i2a(arg_int,base,out+pos);
+          pos+=len;
           break;
         default: break;
       }

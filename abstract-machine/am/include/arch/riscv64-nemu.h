@@ -2,7 +2,7 @@
 #define ARCH_H__
 
 struct Context {
-    union {
+  union {
     void *pdir;
     uintptr_t gpr[32];
   };

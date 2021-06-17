@@ -118,9 +118,9 @@ static inline def_EHelper(srai) {
   //void rtl_sari(DecodeExecState *s, rtlreg_t *dest, const rtlreg_t *src1, const sword_t imm)
   //sar(*src1, imm);
   //src2 imm
-  printf("started srai\n");
+  //printf("started srai\n");
   rtl_sari(s, ddest, dsrc1, id_src2->imm);
-  printf("dest value is 0x%lx\n",*ddest);
+  //printf("dest value is 0x%lx\n",*ddest);
   print_asm_template3(srai);
 }
  
