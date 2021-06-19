@@ -91,7 +91,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
 
   // 读指针越界 || 读指针地址+读取长度 越界
   //printf("ff->open_offset : %d,  ff->size : %d\n",ff->open_offset,ff->size);
-  //assert( ff->open_offset <= ff->size );
+  assert( ff->open_offset <= ff->size );
 
   // if(ff->open_offset + len > ff->size) {
   //   len = ff->size - ff->open_offset;
