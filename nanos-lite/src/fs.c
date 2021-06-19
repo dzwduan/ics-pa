@@ -28,9 +28,9 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
-  [FD_STDIN]  = {"stdin",  0, 0,0, invalid_read, invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0,0, invalid_read, serial_write},
-  [FD_STDERR] = {"stderr", 0, 0,0,  invalid_read, invalid_write},
+  [FD_STDIN]  = {"stdin",  0, 0, 0, invalid_read,  invalid_write},
+  [FD_STDOUT] = {"stdout", 0, 0, 0, invalid_read,  serial_write},
+  [FD_STDERR] = {"stderr", 0, 0, 0,  invalid_read, serial_write},
 #include "files.h"
 };
 
@@ -91,7 +91,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
 
   // 读指针越界 || 读指针地址+读取长度 越界
   //printf("ff->open_offset : %d,  ff->size : %d\n",ff->open_offset,ff->size);
-  assert( ff->open_offset <= ff->size );
+  //assert( ff->open_offset <= ff->size );
 
   // if(ff->open_offset + len > ff->size) {
   //   len = ff->size - ff->open_offset;
@@ -100,7 +100,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
   /* read `len' bytes starting from `offset' of ramdisk into `buf' */
   //printf("disk_offset is 0x%x\n",ff->disk_offset);
   size_t count = ff->read(buf,ff->disk_offset + ff->open_offset,len);
-  ff->open_offset += count; //注意更新!
+  fs_lseek(fd,count,SEEK_CUR); //注意更新!
   return count;
 }
 
@@ -120,7 +120,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
   
   Finfo * ff = &file_table[fd];
   assert(ff);
-  printf("ff-addr : %p, buf-addr: %p\n",ff,buf);
+  // printf("ff-addr : %p, buf-addr: %p\n",ff,buf);
   // 写指针越界 || 读写针地址+写长度 越界
   // printf("fd is %d\n",fd);
   // printf("ff->open_offset : %d,  ff->size : %d\n",ff->open_offset,ff->size);
@@ -146,7 +146,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
   // for(i=0;i<count;i++) {
   //   putch(*(char *)(buf+i));
   // }
-    ff->open_offset += count;
+    fs_lseek(fd,count,SEEK_CUR);
     return count;
   }
 }
