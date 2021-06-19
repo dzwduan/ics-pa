@@ -91,7 +91,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
 
   // 读指针越界 || 读指针地址+读取长度 越界
   //printf("ff->open_offset : %d,  ff->size : %d\n",ff->open_offset,ff->size);
-  //assert( ff->open_offset <= ff->size );
+  assert( ff->open_offset <= ff->size );
 
   // if(ff->open_offset + len > ff->size) {
   //   len = ff->size - ff->open_offset;
@@ -158,9 +158,9 @@ size_t fs_lseek(int fd, size_t offset, int whence) {
   Finfo * ff = &file_table[fd];
 
   switch(whence) {
-    case SEEK_SET: assert(offset <= ff->size);ff->open_offset = offset;break;
-    case SEEK_CUR: assert((offset+ff->open_offset) <= ff->size);ff->open_offset +=offset;break;
-    case SEEK_END: assert((offset+ff->size) <= ff->size);ff->open_offset = ff->size + offset;break;
+    case SEEK_SET: ff->open_offset = offset;break;
+    case SEEK_CUR: ff->open_offset +=offset;break;
+    case SEEK_END: ff->open_offset = ff->size + offset;break;
     default: assert(0);
   }
   return ff->open_offset;
