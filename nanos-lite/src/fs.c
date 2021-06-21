@@ -125,15 +125,15 @@ size_t fs_write(int fd, const void *buf, size_t len) {
   // printf("fd is %d\n",fd);
   // printf("ff->open_offset : %d,  ff->size : %d\n",ff->open_offset,ff->size);
 
-  if(fd==1 || fd==2) {
-    int i;
-    for(i=0;i<len;i++) {
-      putch(*(char *)(buf+i));
-    }
-    return len;
-  }
-  else {
-    assert( ff->open_offset <= ff->size );
+  // if(fd==1 || fd==2) {
+  //   int i;
+  //   for(i=0;i<len;i++) {
+  //     putch(*(char *)(buf+i));
+  //   }
+  //   return len;
+  // }
+  // else {
+    //assert( ff->open_offset <= ff->size );
 
   // if(ff->open_offset + len > ff->size) {
   //   len = ff->size - ff->open_offset;
@@ -148,7 +148,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
   // }
     fs_lseek(fd,count,SEEK_CUR);
     return count;
-  }
+  // }
 }
 
 //根据whence修改offset
