@@ -158,9 +158,9 @@ size_t fs_lseek(int fd, size_t offset, int whence) {
   Finfo * ff = &file_table[fd];
 
   switch(whence) {
-    case SEEK_SET: assert(offset <= ff->size);ff->open_offset = offset;break;
-    case SEEK_CUR: assert((offset+ff->open_offset) <= ff->size);ff->open_offset +=offset;break;
-    case SEEK_END: assert((offset+ff->size) <= ff->size);ff->open_offset = ff->size + offset;break;
+    case SEEK_SET: ff->open_offset = offset;break;
+    case SEEK_CUR: ff->open_offset +=offset;break;
+    case SEEK_END: ff->open_offset = ff->size + offset;break;
     default: assert(0);
   }
   return ff->open_offset;
