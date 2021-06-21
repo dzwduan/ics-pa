@@ -39,10 +39,6 @@ void yield() {
   asm volatile("li a7, -1; ecall");
 }
 
-// void write(){
-//   asm volatile("")
-// }
-
 bool ienabled() {
   return false;
 }

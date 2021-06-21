@@ -78,6 +78,7 @@ static inline def_EHelper(r2r){
     EX (0x007, and)
     EX (0x008, mul)
     EX (0x00d, divu)
+    EX (0x00f, remu)
     default: exec_inv(s);
   }
 }
@@ -119,9 +120,9 @@ static inline def_EHelper(system) {
     IDEX  (1, CSR, csrrw)
     IDEX  (2, CSR, csrrs)
     IDEX  (3, CSR, csrrc)
-    // IDEX  (5, CSRI, csrrwi)  
-    // IDEX  (6, CSRI, cssrrsi)  
-    // IDEX  (7, CSRI, csrrci)
+    IDEX  (5, CSRI, csrrwi)  
+    IDEX  (6, CSRI, csrrsi)  
+    IDEX  (7, CSRI, csrrci)
     default: exec_inv(s);
   }
 }

@@ -85,23 +85,23 @@ static inline def_EHelper(csrrc) {
   print_asm_template3(csrrc);
 }
 
-// //x[rd] = CSRs[csr]; CSRs[csr] = zimm
-// static inline def_EHelper(csrrwi) {
-//   s0 = encode_csr(id_src2->imm);
-//   rtl_mv(s,ddest,s0);
-//   rtl_li(s,s0,id_src1->imm);
-//   print_asm_template3(csrrwi);
-// }
+//x[rd] = CSRs[csr]; CSRs[csr] = zimm
+static inline def_EHelper(csrrwi) {
+  rtlreg_t* t = encode_csr(id_src2->imm);
+  rtl_mv(s,ddest,t);
+  rtl_li(s,t,id_src1->imm);
+  print_asm_template3(csrrwi);
+}
 
-// //CSRs[csr] |= zimm
-// static inline def_EHelper(csrrci) {
-//   s0 = encode_csr(id_src2->imm);
-//   rtl_or(s,s0,s0,id_src1->imm);
-//   print_asm_template3(csrrci);
-// }
+//CSRs[csr] |= zimm
+static inline def_EHelper(csrrci) {
+  rtlreg_t* t = encode_csr(id_src2->imm);
+  rtl_or(s,t,t,dsrc1);
+  print_asm_template3(csrrci);
+}
 
 
-// static inline def_EHelper(csrrsi) {
-//   TODO();
-//   //print_asm_template3(csrrsi);
-// }
+static inline def_EHelper(csrrsi) {
+  TODO();
+  //print_asm_template3(csrrsi);
+}
