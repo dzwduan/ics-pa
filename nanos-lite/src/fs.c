@@ -4,7 +4,11 @@ typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
 
 extern size_t serial_write(const void *buf, size_t offset, size_t len);
+extern size_t events_read(void *buf, size_t offset, size_t len);
+extern size_t dispinfo_read(void *buf, size_t offset, size_t len);
 
+extern size_t fb_write(const void *buf, size_t offset, size_t len); 
+extern size_t dispinfo_write(const void *buf,size_t offset, size_t len) ;
 typedef struct {
   char *name;    //文件名
   size_t size;  //文件大小
@@ -14,7 +18,7 @@ typedef struct {
   WriteFn write;  
 } Finfo;
 
-enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
+enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_DEV, FD_DISP, FD_FB};
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -28,14 +32,20 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
-  [FD_STDIN]  = {"stdin",  0, 0, 0, invalid_read,  invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0, 0, invalid_read,  serial_write},
-  [FD_STDERR] = {"stderr", 0, 0, 0,  invalid_read, serial_write},
+  [FD_STDIN]  = {"stdin",      0, 0, 0, invalid_read,  invalid_write},
+  [FD_STDOUT] = {"stdout",     0, 0, 0, invalid_read,  serial_write},
+  [FD_STDERR] = {"stderr",     0, 0, 0, invalid_read,  serial_write},
+  [FD_DEV]    = {"/dev/events",0, 0, 0, events_read,   invalid_write},
+  [FD_DISP]   = {"/proc/dispinfo", 0, 0, 0, dispinfo_read, dispinfo_write},
+  [FD_FB]     = {"/dev/fb",    0, 0, 0, invalid_read,  fb_write},
 #include "files.h"
 };
 
 void init_fs() {
   // TODO: initialize the size of /dev/fb
+  int w = io_read(AM_GPU_CONFIG).width;
+  int h = io_read(AM_GPU_CONFIG).height;
+  file_table[FD_FB].size = w*h*4;
 }
 
 int    fs_open(const char *pathname, int flags, int mode);
@@ -68,7 +78,7 @@ int fs_open(const char *pathname, int flags, int mode) {
     //printf("第%d个 : %s\n",i,file_table[i].name);
     if(strcmp(pathname,file_table[i].name)==0) {
       file_table[i].open_offset = 0;
-      if(i>=3){
+      if(i>=6){
         file_table[i].read  = ramdisk_read;
         file_table[i].write = ramdisk_write;
       }

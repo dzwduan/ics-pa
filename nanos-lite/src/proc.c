@@ -29,7 +29,7 @@ void init_proc() {
 
   // load program here
   // test file
-  naive_uload(NULL, "/bin/timer-test");
+  naive_uload(NULL, "/bin/bmp-test");
 }
 
 Context* schedule(Context *prev) {

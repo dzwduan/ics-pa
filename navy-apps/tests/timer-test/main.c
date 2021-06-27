@@ -4,17 +4,35 @@
 #include <NDL.h>
 
 
+// int main() {
+//     struct timeval time;
+//     int sec = 1;
+//     int j = 0;
+//     while (1) {
+//         j++;
+//         if (j == 100000) {
+//             gettimeofday(&time,NULL);
+//             int pre_usec = time.tv_usec;
+//             printf("sec : %ld, usec : %ld\n",time.tv_sec, time.tv_usec);
+//             j = 0;
+//         }
+//     }
+//     return 0;
+// }
+
 int main() {
-  struct timeval time; 
-  time.tv_sec = 0;
-  printf("start tv_sec = %ld\n",time.tv_sec);
-  int cnt = 0;
-  while(1)
-  { 
-      gettimeofday(&time,NULL);
-      if(time.tv_usec == 500000){
-          printf("pass 0.5s\n");
-          time.tv_usec = 0;
-      }
-  } 
+    struct timeval time;
+    int halfsec = 1;
+    int j = 0;
+    while(1) {
+        j++;
+        if(j==100000) {
+            //因为不精确，所以不能整除来求
+            int cur = NDL_GetTicks()/500000;
+            if(cur >= halfsec) {
+                printf("0.5s pass\n");
+                halfsec++;
+            }
+        }
+    }
 }
