@@ -102,19 +102,25 @@ typedef	__uint128_t fixedptud;
 
 #define FIXEDPT_VCSID "$Id$"
 
-#define FIXEDPT_FBITS	(FIXEDPT_BITS - FIXEDPT_WBITS)
-#define FIXEDPT_FMASK	(((fixedpt)1 << FIXEDPT_FBITS) - 1)
+#define FIXEDPT_FBITS	(FIXEDPT_BITS - FIXEDPT_WBITS) //8
+#define FIXEDPT_FMASK	(((fixedpt)1 << FIXEDPT_FBITS) - 1) //1<<8-1
 
+//R = R*1<<8 +|- 0.5  为什么0.5？ 
 #define fixedpt_rconst(R) ((fixedpt)((R) * FIXEDPT_ONE + ((R) >= 0 ? 0.5 : -0.5)))
+//I = I<<8
 #define fixedpt_fromint(I) ((fixedptd)(I) << FIXEDPT_FBITS)
+//F = F>>8
 #define fixedpt_toint(F) ((F) >> FIXEDPT_FBITS)
+
 #define fixedpt_add(A,B) ((A) + (B))
 #define fixedpt_sub(A,B) ((A) - (B))
+//只取低32位
 #define fixedpt_fracpart(A) ((fixedpt)(A) & FIXEDPT_FMASK)
 
-#define FIXEDPT_ONE	((fixedpt)((fixedpt)1 << FIXEDPT_FBITS))
-#define FIXEDPT_ONE_HALF (FIXEDPT_ONE >> 1)
-#define FIXEDPT_TWO	(FIXEDPT_ONE + FIXEDPT_ONE)
+#define FIXEDPT_ONE	((fixedpt)((fixedpt)1 << FIXEDPT_FBITS)) //1<<8
+
+#define FIXEDPT_ONE_HALF (FIXEDPT_ONE >> 1) // 1<<7
+#define FIXEDPT_TWO	(FIXEDPT_ONE + FIXEDPT_ONE) //1<<8 + 1<<8
 #define FIXEDPT_PI	fixedpt_rconst(3.14159265358979323846)
 #define FIXEDPT_TWO_PI	fixedpt_rconst(2 * 3.14159265358979323846)
 #define FIXEDPT_HALF_PI	fixedpt_rconst(3.14159265358979323846 / 2)
@@ -127,31 +133,35 @@ typedef	__uint128_t fixedptud;
 
 /* Multiplies a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_muli(fixedpt A, int B) {
-	return 0;
+	return A*fixedpt_fromint(B)>>FIXEDPT_FBITS;
 }
 
 /* Divides a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_divi(fixedpt A, int B) {
-	return 0;
+	return A/fixedpt_fromint(B)<<FIXEDPT_FBITS;
 }
 
 /* Multiplies two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_mul(fixedpt A, fixedpt B) {
-	return 0;
+	return A*B>>FIXEDPT_FBITS;
 }
 
 
 /* Divides two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_div(fixedpt A, fixedpt B) {
-	return 0;
+	return A/B<<FIXEDPT_FBITS;
 }
 
 static inline fixedpt fixedpt_abs(fixedpt A) {
-	return 0;
+	if((A&0x80000000)>>31==0) return A;
+	return -A;
 }
 
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return 0;
+	//+0, -0, NaN, or an infinity, x itself is returned.
+	if(A == 0x80000000 || A==0 || A==0x7fffffff) return A;
+	if(A>0) return A&0xffffff00;
+	if(A<0) return A|
 }
 
 static inline fixedpt fixedpt_ceil(fixedpt A) {

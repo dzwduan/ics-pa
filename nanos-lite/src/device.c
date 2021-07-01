@@ -51,7 +51,7 @@ int height= 0;
 
 //将文件的len字节写到buf中 WIDTH : 640  HEIGHT:480
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  printf("dispinfo_read start\n");
+  //printf("dispinfo_read start\n");
   AM_GPU_CONFIG_T gpu_config = io_read(AM_GPU_CONFIG);
   printf("w : %d, h : %d\n",gpu_config.width,gpu_config.height);
   width = gpu_config.width;
@@ -61,6 +61,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 
 char dispinfo[128];
 // size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
+// 写入大小信息
 size_t dispinfo_write(const void *buf,size_t offset, size_t len) {
   //printf("get in dispinfo_write\n");
   strncpy(dispinfo,buf,len);
@@ -90,7 +91,7 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   int y = offset/4/width;
   //AM_DEVREG(11, GPU_FBDRAW,   WR, int x, y; void *pixels; int w, h; bool sync);
   //    io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
-  io_write(AM_GPU_FBDRAW, x, y, (uint32_t *)buf, len/4, 1, true);
+  io_write(AM_GPU_FBDRAW, x, y, (uint32_t *)buf, width, 1, true);
   // printf("get out of fb_write\n");
   return len;
 }
