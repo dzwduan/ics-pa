@@ -73,6 +73,7 @@
 #endif
 
 #include <stdint.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,39 +134,53 @@ typedef	__uint128_t fixedptud;
 
 /* Multiplies a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_muli(fixedpt A, int B) {
-	return A*fixedpt_fromint(B)>>FIXEDPT_FBITS;
+	return (fixedpt)(A*B);
 }
 
 /* Divides a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_divi(fixedpt A, int B) {
-	return A/fixedpt_fromint(B)<<FIXEDPT_FBITS;
+	return (fixedpt)(A/B);
 }
 
 /* Multiplies two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_mul(fixedpt A, fixedpt B) {
-	return A*B>>FIXEDPT_FBITS;
+ 	fixedpt res = (fixedpt)(A*(B>>FIXEDPT_FBITS));
+	printf("mul A=%d, B=%d, res=%d\n",A,B,res);
+	return res;
 }
 
 
 /* Divides two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_div(fixedpt A, fixedpt B) {
-	return A/B<<FIXEDPT_FBITS;
+	fixedpt res = (fixedpt)(A<<FIXEDPT_FBITS/B);
+	printf("div A=%d, B=%d, res=%d\n",A,B,res);
+	return res;
 }
 
 static inline fixedpt fixedpt_abs(fixedpt A) {
-	if((A&0x80000000)>>31==0) return A;
-	return -A;
+	if(A>=0) return (fixedpt)A;
+	return (fixedpt)(fixedpt_divi(A, -1));
 }
 
 static inline fixedpt fixedpt_floor(fixedpt A) {
 	//+0, -0, NaN, or an infinity, x itself is returned.
 	if(A == 0x80000000 || A==0 || A==0x7fffffff) return A;
+
+	fixedpt dec = fixedpt_fracpart(A);
+	if(dec == 0) return A;
+	//A>0只取整数部分
 	if(A>0) return A&0xffffff00;
-	if(A<0) return A|
+	//A<0取整数部分-1
+	if(A<0) return fixedpt_sub(A&0xffffff00,FIXEDPT_ONE);
 }
 
+// These functions return the smallest integral value that is not less than x.
+// For example, ceil(0.5) is 1.0, and ceil(-0.5) is 0.0.
 static inline fixedpt fixedpt_ceil(fixedpt A) {
-	return 0;
+	fixedpt dec = fixedpt_fracpart(A);
+	if(dec == 0) return A;
+	if(A>=0) return fixedpt_add(A&0xffffff00,FIXEDPT_ONE);
+	if(A<0)  return A&0xffffff00;
 }
 
 /*
